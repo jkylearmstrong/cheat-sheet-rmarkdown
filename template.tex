@@ -2,7 +2,7 @@
 % Reference: https://tex.stackexchange.com/questions/8827/preparing-cheat-sheets/8915
 
 % Package imports.
-\documentclass[10pt,landscape]{article}
+\documentclass[25pt,landscape]{article}
 \usepackage{multicol}
 \usepackage{calc}
 \usepackage{ifthen}
@@ -10,6 +10,10 @@
 \usepackage{amsmath,amsthm,amsfonts,amssymb}
 \usepackage{color,graphicx,overpic}
 \usepackage{hyperref}
+
+$if(highlighting-macros)$
+$highlighting-macros$
+$endif$
 
 % Sets page margins.
 \geometry{top=.2in,left=.2in,right=.2in,bottom=.2in}
@@ -58,7 +62,7 @@
 % Specifying number of columns.
 % Asterisk "*" here to force the left-most column to fill first, then the next, ect.
 % (Otherwise, all columns would fill down "equally".
-\begin{multicols*}{4}
+\begin{multicols*}{3}
 
 % Can play around with these as desired.
 \setlength{\columnseprule}{0.25pt}
