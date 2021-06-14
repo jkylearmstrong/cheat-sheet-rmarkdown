@@ -1,9 +1,7 @@
 ---
 title: "Data Wrangling and Statistics in R"
 author: "J Kyle Armstrong PhD"
-output:
-  pdf_document:
-    template: template.tex
+output: slidy_presentation
 ---
 
 
@@ -20,7 +18,7 @@ library('tidyverse')
 ```
 
 
-## Read in data
+# Read in data
 
 Often the first step is to connect to the data:
 
@@ -42,13 +40,15 @@ A_DATA <- readRDS('A_DATA.RDS')
 A_DATA <- readxl::read_excel('A_DATA.xlsx') # don't forget about sheets! 
 ```
 
+# Read CSV
+
 ```{r real-read-in }
 A_DATA <- readr::read_csv('A_DATA.csv')
 ```
 
 
 
-## Transform and Summarise Data
+# Transform and Summarise Data
 
 Use dplyr and the tidyverse to get summary data 
 
@@ -58,8 +58,11 @@ A_DATA %>%
   group_by(DIABETES, over_50) %>%
   summarise(n = n(),
             mean_age = mean(Age, na.rm = TRUE),
+            sd_age = sd(Age, na.rm = TRUE),
             .groups = 'keep')
 ```
+
+# Piviot Longer
 
 ```{r}
 A_DATA %>%
@@ -67,11 +70,14 @@ A_DATA %>%
   group_by(DIABETES, over_50) %>%
   summarise(n = n(),
             mean_age = mean(Age, na.rm = TRUE),
+            sd_age = sd(Age, na.rm = TRUE),
             .groups = 'keep') %>%
   pivot_longer(cols=c(n,mean_age),
                names_to = "statistic",
                values_to = "value")
 ```
+
+# Get Counts by Groups
 
 ```{r}
 A_DATA %>%
@@ -79,6 +85,8 @@ A_DATA %>%
   group_by(Gender, Race) %>%
   tally()
 ```
+
+# Pivot Wider
 
 ```{r}
 A_DATA %>%
@@ -89,7 +97,7 @@ A_DATA %>%
   pivot_wider(Race, names_from= Gender, values_from = n)
 ```
 
-## Export Data 
+# Export Data 
 
 Write and Save Data
 
@@ -100,11 +108,48 @@ A_DATA %>% readr::write_csv('A_DATA.csv')
 ```
 
 
-## Stats
+# Stats
 
-### t-test
+# t-test
+```{r}
+Target_Age <- (A_DATA %>%
+  filter(DIABETES == 1))$Age
 
-### ks-test
+Control_Age <- (A_DATA %>%
+  filter(DIABETES == 0))$Age
+
+t.test(Target_Age, Control_Age,
+       alternative = "two.sided",
+       conf.level = 0.95) %>%
+  broom::tidy()
+```
+
+
+# t-test
+```{r}
+t.test(Age ~ DIABETES,
+       data = A_DATA %>% filter(!is.na(DIABETES)),
+       alternative = "two.sided",
+       conf.level = 0.95)
+```
+
+# ks-test
+```{r}
+A_DATA %>%
+  filter(!is.na(DIABETES))%>%
+  ggplot(aes(x=Age, color=as.factor(DIABETES))) +
+  stat_ecdf() + 
+  labs(title = "K-S Test")
+```
+
+# ks-test 
+```{r}
+ks.test(Target_Age, Control_Age,
+       alternative = "two.sided") %>%
+  broom::tidy() 
+```
+
+
 
 ### chi-square test
 
